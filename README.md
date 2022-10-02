@@ -1,1 +1,3 @@
-# clammy-move-5899
+# Course Monitoring System
+
+## To Run the programme use main class inside uscases folder
