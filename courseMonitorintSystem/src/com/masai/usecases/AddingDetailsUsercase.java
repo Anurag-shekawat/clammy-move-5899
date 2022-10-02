@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import com.masai.bean.Batch;
 import com.masai.bean.Course;
+import com.masai.bean.CoursePlan;
+import com.masai.bean.Faculty;
 import com.masai.dao.AdminDao;
 import com.masai.dao.AdminDaoImpl;
 
@@ -32,6 +34,8 @@ public class AddingDetailsUsercase {
 		String str = ad.addNewCourse(course);
 		System.out.println(str);
 		
+		
+		sc.close();
 	}
 	
 	public static void createBatch() {
@@ -62,6 +66,64 @@ public class AddingDetailsUsercase {
 		String str = ad.createNewBatch(batch);
 		System.out.println(str);
 		
+		sc.close();
+	}
+	
+	public static void createFaculty() {
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Enter name of faculty");
+		String name = sc.nextLine();
+
+		System.out.println("Enter address of faculty");
+		String address = sc.nextLine();
+
+		System.out.println("Enter mobile of faculty");
+		String mobile = sc.nextLine();
+
+		System.out.println("Enter email of faculty");
+		String email = sc.nextLine();
+
+		System.out.println("Enter Username of faculty");
+		String username = sc.nextLine();
+
+		System.out.println("Enter Password of faculty");
+		String password = sc.nextLine();
+		
+		
+		Faculty fac = new Faculty(name,address,mobile,email,username,password);
+
+		AdminDao ad = new AdminDaoImpl();
+		String str = ad.createNewFaculty(fac);
+		System.out.println(str);
+		
+		sc.close();
+	}
+	
+	public static void createCoursePlan() {
+		
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Enter Batch id...");
+		int bid = sc.nextInt();
+		
+		System.out.println("Enter Day no...");
+		int dayNo = sc.nextInt();
+		
+		sc.nextLine();
+		System.out.println("Enter Topic...");
+		String topic = sc.nextLine();
+		
+		System.out.println("Enter Status --- completed/pending");
+		String status = sc.nextLine();
+		
+		CoursePlan cp = new CoursePlan(bid,dayNo,topic,status);
+		
+		AdminDao ad = new AdminDaoImpl();
+		String str = ad.createCoursePlan(cp);
+		System.out.println(str);
+		
+		sc.close();
 	}
 
 }

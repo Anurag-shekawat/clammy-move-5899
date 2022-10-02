@@ -19,13 +19,15 @@ public class AdminLoginUsecase {
 		
 		try {
 			AdminDao ad = new AdminDaoImpl();
-			String str = ad.loginAdmin(username, password);
+			ad.loginAdmin(username, password);
 			res = true;
 //			System.out.println("Welcome "+str);
 		} catch (AdminException e) {
 //			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
+		
+//		sc.close();
 		
 		return res;
 		

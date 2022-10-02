@@ -7,8 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import com.masai.bean.Batch;
+import com.masai.bean.BatchReport;
 import com.masai.bean.Course;
+import com.masai.bean.CoursePlan;
+import com.masai.bean.Faculty;
 import com.masai.exceptions.AdminException;
 import com.masai.utility.DBUtil;
 
@@ -29,7 +33,8 @@ public class AdminDaoImpl implements AdminDao {
 			
 			if(rs.next()) {
 				String name = rs.getString("username");
-				String pass = rs.getString("password");
+//				String pass = rs.getString("password");
+				rs.getString("password");
 				
 				res = name;
 			}else {
@@ -67,7 +72,8 @@ public class AdminDaoImpl implements AdminDao {
 			
 		} catch (SQLException e) {
 			// TODO: handle exception
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 		return str;
@@ -93,7 +99,8 @@ public class AdminDaoImpl implements AdminDao {
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 		return res;
@@ -157,9 +164,10 @@ public class AdminDaoImpl implements AdminDao {
 				str = "Batch Created Sucessfully";
 			}
 			
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// TODO: handle exception
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 		return str;
@@ -182,9 +190,10 @@ public class AdminDaoImpl implements AdminDao {
 				res = "No. of Students updated sucessfully...";
 			}
 			
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			// TODO: handle exception
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 		return res;
@@ -228,6 +237,237 @@ public class AdminDaoImpl implements AdminDao {
 		
 		return list;
 	}
+
+
+
+	@Override
+	public String createNewFaculty(Faculty faculty) {
+		String str = "Something went wrong...";
+		
+		try(Connection conn = DBUtil.provideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("insert into faculty values (?,?,?,?,?,?,?)");
+			
+			ps.setInt(1, faculty.getFacultyId());
+			ps.setString(2, faculty.getFacultyName());
+			ps.setString(3, faculty.getFacultyAddress());
+			ps.setString(4, faculty.getMobile());
+			ps.setString(5, faculty.getEmail());
+			ps.setString(6, faculty.getUsername());
+			ps.setString(7, faculty.getPassword());
+			
+			int x = ps.executeUpdate();
+			
+			if(x>0) {
+				str = "Faculty added sucessfully...";
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		
+		return str;
+	}
+
+
+
+	@Override
+	public List<Faculty> showAllFaculty() throws AdminException {
+		List<Faculty> list = new ArrayList<>();
+		
+		try(Connection conn = DBUtil.provideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("select * from faculty");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				
+				int fid = rs.getInt("facultyId");
+				String name = rs.getString("facultyName");
+				String address =rs.getString("facultyAddress");
+				String mobile =rs.getString("mobile");
+				String email =rs.getString("email");
+				String username =rs.getString("username");
+				String password =rs.getString("password");
+				
+				Faculty fac = new Faculty(fid,name,address,mobile,email,username,password);
+				list.add(fac);
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new AdminException(e.getMessage());		
+		
+		}
+		
+		if(list.size()==0) {
+			throw new AdminException("No Faculty found..");
+		}
+		
+		return list;
+	}
+
+
+
+	@Override
+	public String allocateFacultyToBatch(int facId, int batchId) {
+		String res = "Batch does not exist...";
+		
+		try(Connection conn = DBUtil.provideConnection()) {
+			PreparedStatement ps = conn.prepareStatement("update batch set facultyId = ? where batchId = ?;");
+			ps.setInt(1, facId);
+			ps.setInt(2, batchId);
+			
+			int x = ps.executeUpdate();
+			if(x>0) {
+				res = "Faculty allocated sucessfully to batch no "+batchId;
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		
+		return res;
+	}
+
+
+
+	@Override
+	public String createCoursePlan(CoursePlan cp) {
+		String str = "Something went wrong...";
+		
+		try(Connection conn = DBUtil.provideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("insert into coursePlan values (?,?,?,?,?)");
+			
+			ps.setInt(1, cp.getPlanId());
+			ps.setInt(2, cp.getBatchId());
+			ps.setInt(3,cp.getDayNumber());
+			ps.setString(4, cp.getTopic());
+			ps.setString(5, cp.getStatus());
+			
+			int x = ps.executeUpdate();
+			
+			if(x>0) {
+				str = "Course Plan Created Sucessfully...";
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		
+		return str;
+	}
+
+
+
+	@Override
+	public String updateStatusInCoursePlan(int planId, int batchId) {
+		
+		String res = "Course plan does not exist...";
+		
+		try(Connection conn = DBUtil.provideConnection()) {
+			PreparedStatement ps = conn.prepareStatement("update coursePlan set status = 'completed' where planId = ? AND batchId=?");
+			ps.setInt(1, planId);
+			ps.setInt(2, batchId);
+			
+			int x = ps.executeUpdate();
+			if(x>0) {
+				res = "status updated sucessfully...";
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		
+		return res;
+	}
+
+
+
+	@Override
+	public List<CoursePlan> showAllCoursePlan() throws AdminException {
+		
+		List<CoursePlan> list = new ArrayList<>();
+		
+		try(Connection conn = DBUtil.provideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("select * from coursePlan");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				int planId = rs.getInt("planId");
+				int batchId = rs.getInt("batchId");
+				int dayNo = rs.getInt("daynumber");
+				String topic = rs.getString("topic");
+				String status = rs.getString("status");
+				
+				CoursePlan cp = new CoursePlan(planId,batchId,dayNo,topic,status);
+				list.add(cp);
+			}
+			
+		} catch (SQLException e) {
+			throw new AdminException(e.getMessage());
+		}
+		
+		if(list.size()==0) {
+			throw new AdminException("No records found");
+		}
+		
+		
+		return list;
+		
+	}
+
+
+
+	@Override
+	public List<BatchReport> generatebatchReport() throws AdminException {
+		List<BatchReport> list = new ArrayList<>();
+		
+		try(Connection conn = DBUtil.provideConnection()) {
+			
+			PreparedStatement ps = conn.prepareStatement("select b.batchId, c.courseName, f.facultyName, cp.daynumber, cp.status "
+					+ "from batch b, course c, faculty f, coursePlan cp "
+					+ "where b.facultyId=f.facultyId AND b.courseId = c.courseId AND b.batchId = cp.batchId;");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				int bId = rs.getInt("batchId");
+				String cName = rs.getString("courseName");
+				String fname = rs.getString("facultyName");
+				int dayno = rs.getInt("daynumber");
+				String status = rs.getString("status");
+				
+				BatchReport br = new BatchReport(bId,cName,fname,dayno,status);
+				list.add(br);
+			}
+			
+		} catch (SQLException e) {
+			throw new AdminException(e.getMessage());
+		}
+		
+		if(list.size()==0) {
+			throw new AdminException("No records found");
+		}
+		
+		
+		return list;
+		
+	}
+
 
 	
 	

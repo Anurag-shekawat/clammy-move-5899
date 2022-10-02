@@ -49,11 +49,11 @@ foreign key (facultyId) references faculty(facultyId)
 ----------CousrePlan table==========
 
 create table coursePlan(
-planId int primary key,
+planId int primary key auto_increment,
 batchId int,
 daynumber int,
 topic varchar(15),
-status varhcar(10),
+status varchar(10),
 foreign key (batchId) references batch(batchId)
 );
 
