@@ -46,7 +46,7 @@ foreign key (courseId) references course(courseId),
 foreign key (facultyId) references faculty(facultyId)
 );
 
-----------CousrePlan table==========
+----------CoursePlan table==========
 
 create table coursePlan(
 planId int primary key auto_increment,
