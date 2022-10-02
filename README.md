@@ -1,3 +1,3 @@
 # Student Monitoring System
 
-## To Run the programme Use main class inide uscases folder
+## To Run the programme use main class inside uscases folder
